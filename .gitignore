@@ -1,0 +1,8 @@
+# Local configuration (do not commit real secrets)
+config/door_config.yml
+config/*.local.yml
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class

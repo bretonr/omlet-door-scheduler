@@ -1,0 +1,33 @@
+name: Update Omlet Door Schedule
+
+on:
+  schedule:
+    - cron: '0 12 * * *' # Daily at 12:00 UTC
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run scheduler
+        # Single YAML secret containing all configuration (and secrets).
+        # Create a repository secret named CONFIG_YAML with the YAML content, or omit to use a checked-in config file at config/door_config.yml
+        env:
+          CONFIG_YAML: ${{ secrets.CONFIG_YAML }}
+        run: |
+          mkdir -p config
+          printf "%s" "$CONFIG_YAML" > config/door_config.yml
+          python -u src/door_scheduler.py --config config/door_config.yml

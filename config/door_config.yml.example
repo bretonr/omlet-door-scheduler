@@ -1,0 +1,23 @@
+# Example configuration for Omlet Smart Autodoor scheduler
+# Copy this file to config/door_config.yml and fill in your values.
+# Do NOT commit your real config file; it's ignored via .gitignore.
+
+# Omlet API
+OMLET_API_KEY: "REPLACE_WITH_YOUR_OMLET_API_KEY"
+
+# Device selection (set either DEVICE_ID or DEVICE_NAME)
+# If both are omitted and you only have one device, that device will be used.
+DEVICE_ID: ""
+DEVICE_NAME: ""
+
+# Location and timezone
+LATITUDE: 51.5072
+LONGITUDE: -0.1276
+TIMEZONE: Europe/London
+
+# Offsets in minutes (can be negative)
+OPEN_OFFSET_MINUTES: 10
+CLOSE_OFFSET_MINUTES: -15
+
+# When true, the script logs the computed times but does not call the Omlet API
+DRY_RUN: true
