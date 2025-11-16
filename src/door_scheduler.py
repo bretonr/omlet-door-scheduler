@@ -7,7 +7,10 @@ import argparse
 
 from zoneinfo import ZoneInfo
 
-from src.sun_times import compute_sun_times, parse_float_env, parse_int_env
+try:
+    from src.sun_times import compute_sun_times, parse_float_env, parse_int_env
+except ModuleNotFoundError:
+    from sun_times import compute_sun_times, parse_float_env, parse_int_env
 
 
 logging.basicConfig(level=os.getenv("LOG_LEVEL", "INFO"))
