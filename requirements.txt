@@ -1,5 +1,4 @@
-#smartcoop-python-sdk>=1.0.0
-smartcoop-python-sdk @ git+https://github.com/bretonr/smartcoop-python-sdk.git@fix_configuration_fan
+smartcoop-python-sdk>=1.1.1
 astropy>=6.0
 astroplan>=0.9
 python-dateutil>=2.8.2
