@@ -144,6 +144,81 @@ def main(config_file: Optional[str] = None):
             from smartcoop.api.omlet import Omlet  # type: ignore
             logger.info("SDK import succeeded after applying configuration_fan stub")
             return SmartCoopClient, Omlet
+        except TypeError as e:
+            # Some SDK versions have an invalid dataclass definition for ConfigurationGeneral
+            # ("non-default argument 'statusUpdatePeriod' follows default argument").
+            msg = str(e)
+            if "non-default argument 'statusUpdatePeriod' follows default argument" in msg:
+                logger.warning(
+                    "Encountered TypeError importing SDK ConfigurationGeneral: %s. Applying stub workaround...",
+                    e,
+                )
+                mod_name = "smartcoop.api.models.configuration_general"
+                if mod_name not in sys.modules:
+                    from dataclasses import dataclass
+                    from typing import Optional, Any
+
+                    m = ModuleType(mod_name)
+
+                    @dataclass
+                    class ConfigurationGeneral:  # type: ignore[no-redef]
+                        datetime: str
+                        timezone: str
+                        updateFrequency: int
+                        statusUpdatePeriod: int
+                        language: Optional[str] = None
+                        overnightSleepEnable: Optional[bool] = None
+                        overnightSleepStart: Optional[str] = None
+                        overnightSleepEnd: Optional[str] = None
+                        pollFreq: Optional[int] = None
+                        stayAliveTime: Optional[int] = None
+                        useDst: Optional[bool] = None
+
+                        @staticmethod
+                        def from_json(json_data: Any) -> "ConfigurationGeneral":
+                            return ConfigurationGeneral(
+                                datetime=json_data["datetime"],
+                                timezone=json_data["timezone"],
+                                updateFrequency=json_data["updateFrequency"],
+                                statusUpdatePeriod=json_data["statusUpdatePeriod"],
+                                language=json_data.get("language"),
+                                overnightSleepEnable=json_data.get("overnightSleepEnable"),
+                                overnightSleepStart=json_data.get("overnightSleepStart"),
+                                overnightSleepEnd=json_data.get("overnightSleepEnd"),
+                                pollFreq=json_data.get("pollFreq"),
+                                stayAliveTime=json_data.get("stayAliveTime"),
+                                useDst=json_data.get("useDst"),
+                            )
+
+                        def to_json(self) -> dict:
+                            return {
+                                "datetime": self.datetime,
+                                "timezone": self.timezone,
+                                "updateFrequency": self.updateFrequency,
+                                "statusUpdatePeriod": self.statusUpdatePeriod,
+                                "language": self.language,
+                                "overnightSleepEnable": self.overnightSleepEnable,
+                                "overnightSleepStart": self.overnightSleepStart,
+                                "overnightSleepEnd": self.overnightSleepEnd,
+                                "pollFreq": self.pollFreq,
+                                "stayAliveTime": self.stayAliveTime,
+                                "useDst": self.useDst,
+                            }
+
+                    m.ConfigurationGeneral = ConfigurationGeneral  # type: ignore[attr-defined]
+                    sys.modules[mod_name] = m
+
+                from smartcoop.client import SmartCoopClient  # type: ignore
+                from smartcoop.api.omlet import Omlet  # type: ignore
+                logger.info("SDK import succeeded after applying configuration_general stub")
+                return SmartCoopClient, Omlet
+
+            logger.error(
+                "Failed to import smartcoop-python-sdk due to TypeError: %s. You may need to update/downgrade the SDK, "
+                "or continue using DRY_RUN=true.",
+                e,
+            )
+            raise
         except Exception as e:  # pragma: no cover
             logger.error(
                 "Failed to import smartcoop-python-sdk (error: %s). If you see a SyntaxError from the SDK,\n"

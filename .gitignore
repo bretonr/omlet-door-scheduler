@@ -2,6 +2,11 @@
 config/door_config.yml
 config/*.local.yml
 
+# Local copies of SmartCoop SDK used for testing
+smartcoop
+smartcoop/
+smartcoop-python-sdk/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
