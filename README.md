@@ -85,6 +85,12 @@ DRY_RUN: true
 
 Then the workflow will run on schedule or via the “Run workflow” button.
 
+To update the secret from your local config file using GitHub CLI:
+
+```bash
+gh secret set CONFIG_YAML < config/door_config.yml
+```
+
 ## Notes and caveats
 
 - The script sets the door to time-based open/close for the day by writing `openMode=time` and `closeMode=time` with the computed `openTime` and `closeTime`.
