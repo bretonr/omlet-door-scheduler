@@ -90,6 +90,9 @@ def main(config_file: Optional[str] = None):
     open_offset = int(cfg_get("OPEN_OFFSET_MINUTES") or 0)
     close_offset = int(cfg_get("CLOSE_OFFSET_MINUTES") or 0)
 
+    # Minimum open time (HH:MM:SS format)
+    min_open_time = cfg_get("MIN_OPEN_TIME") or "06:00:00"
+
     # Device selection
     device_id = cfg_get("DEVICE_ID")
     device_name = cfg_get("DEVICE_NAME")
@@ -107,6 +110,7 @@ def main(config_file: Optional[str] = None):
         tz_name=tz_name,
         open_offset_min=open_offset,
         close_offset_min=close_offset,
+        min_open_time_str=min_open_time,
     )
 
     logger.info("Computed times (local %s): open=%s, close=%s", tz_name, schedule.open_hhmm, schedule.close_hhmm)
@@ -235,6 +239,13 @@ def main(config_file: Optional[str] = None):
 
     device = find_device(omlet, device_id, device_name)
     logger.info("Updating device: %s (%s)", device.name, device.deviceId)
+
+    # Log battery level if available
+    battery_level = device.state.general.batteryLevel
+    if battery_level is not None:
+        logger.info("Device battery level: %d%%", battery_level)
+    else:
+        logger.info("Battery level not available for this device")
 
     configuration = device.configuration
 

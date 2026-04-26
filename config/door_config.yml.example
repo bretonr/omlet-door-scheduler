@@ -19,5 +19,8 @@ TIMEZONE: Europe/London
 OPEN_OFFSET_MINUTES: 10
 CLOSE_OFFSET_MINUTES: -15
 
+# Minimum time for door opening (HH:MM:SS format)
+MIN_OPEN_TIME: "06:00:00"
+
 # When true, the script logs the computed times but does not call the Omlet API
 DRY_RUN: true

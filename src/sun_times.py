@@ -56,6 +56,7 @@ def compute_sun_times(
     tz_name: str,
     open_offset_min: int = 0,
     close_offset_min: int = 0,
+    min_open_time_str: str = "06:00:00",
 ) -> SunSchedule:
     """
     Compute local sunrise and sunset for the given date and location, then apply offsets.
@@ -111,6 +112,17 @@ def compute_sun_times(
     # Apply offsets
     sr_dt = sr_dt + timedelta(minutes=int(open_offset_min))
     ss_dt = ss_dt + timedelta(minutes=int(close_offset_min))
+
+    # Parse minimum open time from HH:MM:SS format
+    time_parts = min_open_time_str.split(":")
+    min_hour = int(time_parts[0])
+    min_minute = int(time_parts[1]) if len(time_parts) > 1 else 0
+    min_second = int(time_parts[2]) if len(time_parts) > 2 else 0
+
+    # Enforce minimum open time
+    min_open_time = local_midnight.replace(hour=min_hour, minute=min_minute, second=min_second, microsecond=0)
+    if sr_dt < min_open_time:
+        sr_dt = min_open_time
 
     return SunSchedule(sunrise_local=sr_dt, sunset_local=ss_dt)
 
